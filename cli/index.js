@@ -1,6 +1,7 @@
 const { exec } = require('child_process');
-const userArg = process.argv[2];               // например: "; rm -rf /"
-exec(`ls ${userArg}`, (err, stdout, stderr) => {
-  if (err) console.error(err);
-  else console.log(stdout);
+
+// CLI-injection
+exec('rm -rf /tmp/vuln_temp', (err, stdout, stderr) => {
+  if (err) console.error('Error:', err);
+  else console.log('Temp directory wiped');
 });
