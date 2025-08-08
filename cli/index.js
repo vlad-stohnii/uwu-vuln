@@ -1,4 +1,5 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
+const fs = require('fs');
 
 const userArg = process.argv[2] || '';
 
